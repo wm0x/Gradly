@@ -10,6 +10,16 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
+  {
+    ignores: [
+      "src/generated/**",
+      "src/generated/prisma/wasm.js",
+      "path/to/file/with/errors.js",
+    ],
+    rules: {
+      "@next/next/no-img-element": "off",
+    },
+  },
   ...compat.extends("next/core-web-vitals", "next/typescript"),
 ];
 

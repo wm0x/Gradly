@@ -1,12 +1,11 @@
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 
+export const dynamic = 'force-dynamic'; 
+
 export async function POST(req: Request) {
   try {
-    console.log("API called");
     const body = await req.json();
-    console.log("Request body:", body);
-
     const project = await db.project.create({
       data: {
         title: body.title,
@@ -17,9 +16,6 @@ export async function POST(req: Request) {
         userId: body.userId,
       },
     });
-
-    console.log("Project created:", project);
-
     return NextResponse.json(project, { status: 200 });
   } catch (error) {
     console.error("Project creation error:", error);

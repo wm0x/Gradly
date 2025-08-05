@@ -42,7 +42,6 @@ export default [
         { 
           "argsIgnorePattern": "^_",
           "varsIgnorePattern": "^_",
-          "caughtExceptionsIgnorePattern": "^_"
         }
       ],
       "@typescript-eslint/no-require-imports": "error"

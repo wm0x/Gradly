@@ -58,7 +58,7 @@ export default async function DashboardHome() {
                     <div className="flex items-center justify-between">
                         <div>
                             <p className="text-white/70 text-xs md:text-sm mb-1">
-                                Today's Projects
+                                Today Projects
                             </p>
                             <h3 className="text-xl md:text-2xl font-bold text-white">
                                 {stats.todayProjects}

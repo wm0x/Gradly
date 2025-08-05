@@ -21,7 +21,7 @@ export const HoverEffect = ({
   }[];
   className?: string;
 }) => {
-  let [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   return (
     <div className={cn("max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12", className)}>

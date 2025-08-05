@@ -13,14 +13,14 @@ const compat = new FlatCompat({
   }
 });
 
-export default [
+const config = [
   {
     ignores: [
-      "**/generated/**",       
-      "**/node_modules/**",     
-      "**/.next/**",            
-      "**/dist/**",             
-      "**/*.d.ts"               
+      "**/generated/**",
+      "**/node_modules/**",
+      "**/.next/**",
+      "**/dist/**",
+      "**/*.d.ts"
     ]
   },
 
@@ -39,9 +39,9 @@ export default [
     rules: {
       "@typescript-eslint/no-unused-vars": [
         "warn",
-        { 
+        {
           "argsIgnorePattern": "^_",
-          "varsIgnorePattern": "^_",
+          "varsIgnorePattern": "^_"
         }
       ],
       "@typescript-eslint/no-require-imports": "error"
@@ -53,3 +53,5 @@ export default [
     "plugin:@typescript-eslint/recommended"
   )
 ];
+
+export default config;

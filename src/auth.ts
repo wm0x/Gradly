@@ -9,9 +9,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   session: { strategy: "jwt", maxAge: 60 * 5 },
   ...authConfig,
   callbacks: {
-    async signIn({ user }) {
+    async signIn({ user: _user }) {
       return true;
-    },
+    },    
     async session({ token, session }) {
       if (token.sub && session.user) {
         session.user.id = token.sub;

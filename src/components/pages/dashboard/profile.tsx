@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { startTransition, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ComboboxDropdownMenu } from "@/components/ui/combobox-project";
 import { signOut } from "next-auth/react";
@@ -7,6 +7,8 @@ import { format, formatDistanceToNow } from "date-fns";
 import { Session } from "next-auth";
 import EditProfile from "@/components/ui/edit-profile";
 import { toast } from "sonner"
+import { deleteProject } from "@/app/api/action/project/deleteProject";
+import { useRouter } from "next/navigation";
 type Props = {
   session: Session | null;
 };
@@ -19,6 +21,7 @@ type Project = {
 };
 
 export default function DashboardProfile({ session }: Props) {
+  const router = useRouter();
   const [openDialog, setOpenDialog] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -60,13 +63,12 @@ export default function DashboardProfile({ session }: Props) {
   }
 
   function handleDeleteProject(projectId: string) {
-    fetch(`/api/projects/${projectId}`, {
-      method: "DELETE",
-    }).then(res => {
-      if (res.ok) {
-        setProjects((prev) => prev.filter((p) => p.id !== projectId));
+    startTransition(async () => {
+      const { error } = await deleteProject(projectId);
+      if (error) {
+        alert(error);
       } else {
-        alert("Failed to delete project");
+        router.refresh();
       }
     });
   }

@@ -69,6 +69,7 @@ export default function RegisterPage() {
       }
 
       if (data?.success) {
+        setSuccess(success);
         router.push(data.redirectUrl);
       }
     });

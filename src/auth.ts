@@ -4,6 +4,23 @@ import { db } from "./lib/db";
 import { getUserById } from "../data/user";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
+// Extend the default session types
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+      name?: string | null;
+      email?: string | null;
+      username?: string | null;
+      createdAt?: string | null;
+    };
+  }
+  interface User {
+    username?: string | null;
+    createdAt?: string | null;
+  }
+}
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(db),
   session: { strategy: "jwt", maxAge: 60 * 5 },
@@ -20,13 +37,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.name = token.name;
       }
       if (token.username && session.user) {
-        (session.user as any).username = token.username;
+        session.user.username = token.username as string;
       }
       if (token.email && session.user) {
         session.user.email = token.email;
       }
       if (token.createdAt && session.user) {
-        (session.user as any).createdAt = token.createdAt;
+        session.user.createdAt = token.createdAt as string;
       }
 
       return session;
@@ -42,13 +59,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         return token;
       }
 
-      token.id = existingUser.id;
-      token.username = existingUser.username;
-      token.email = existingUser.email;
-      token.name = existingUser.name;
-      token.createdAt = existingUser.createdAt.toISOString(); // ✅ add this
-
-      return token;
+      return {
+        ...token,
+        id: existingUser.id,
+        username: existingUser.username,
+        email: existingUser.email,
+        name: existingUser.name,
+        createdAt: existingUser.createdAt.toISOString()
+      };
     },
   },
 });

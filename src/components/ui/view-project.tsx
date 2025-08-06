@@ -44,7 +44,7 @@ export default function ViewProject({ project, onClose }: ViewProjectProps) {
 
       <div className="relative h-48 md:h-56 w-full overflow-hidden rounded-xl">
         <img 
-          src={project.imageSrc} 
+          src={project.imageSrc || "/img/default_cover.png"} 
           alt={project.title} 
           className="w-full h-full object-cover"
         />

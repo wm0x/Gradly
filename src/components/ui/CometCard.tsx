@@ -15,6 +15,26 @@ import { LuView } from "react-icons/lu";
 import { cn } from "@/lib/utils";
 import { DialogTitle } from "@radix-ui/react-dialog";
 
+interface Project {
+  id?: string;
+  title?: string;
+  description?: string;
+  status?: string;
+  createdAt?: string;
+  finalReportUrl?: string;
+  coverImageUrl?: string | null;
+  imageSrc?: string;
+  userId: string;
+  user?: {
+    name?: string | null;
+    username?: string;
+  };
+  username?: string;
+  rotateDepth?: number;
+  translateDepth?: number;
+  className?: string;
+}
+
 type CometCardProps = {
   id: string;
   title: string;

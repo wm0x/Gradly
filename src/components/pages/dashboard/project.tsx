@@ -44,8 +44,8 @@ export default function DashboardProjects() {
 
         setProjects(transformed);
         setError(null);
-      } catch (err: any) {
-        setError(err.message);
+      } catch  {
+        setError("error there");
       } finally {
         setLoading(false);
       }

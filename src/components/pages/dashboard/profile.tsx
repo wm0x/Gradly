@@ -3,10 +3,9 @@ import React, { startTransition, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ComboboxDropdownMenu } from "@/components/ui/combobox-project";
 import { signOut } from "next-auth/react";
-import { format, formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow } from "date-fns";
 import { Session } from "next-auth";
 import EditProfile from "@/components/ui/edit-profile";
-import { toast } from "sonner"
 import { deleteProject } from "@/app/api/action/project/deleteProject";
 import { useRouter } from "next/navigation";
 type Props = {
@@ -39,22 +38,12 @@ export default function DashboardProfile({ session }: Props) {
       );
 
       if (res.ok) {
-        await signOut({ callbackUrl: "/" }); // logout and redirect
-        toast("You will delete your account", {
-          description: (
-            <span className="text-green-400">
-              {format(new Date(), "EEEE, MMMM dd, yyyy 'at' hh:mm a")}
-            </span>
-          ),
-          action: {
-            label: "Undo",
-            onClick: () => console.log("Undo"),
-          },
-        });
+        await signOut({ callbackUrl: "/" });
       } else {
-        console.error("Failed to delete account");
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Failed to delete account");
       }
-    } catch (error) {
+    } catch {
       console.error("Error deleting account", error);
     } finally {
       setLoading(false);
@@ -64,27 +53,37 @@ export default function DashboardProfile({ session }: Props) {
 
   function handleDeleteProject(projectId: string) {
     startTransition(async () => {
-      const { error } = await deleteProject(projectId);
-      if (error) {
-        alert(error);
-      } else {
+      try {
+        const { error } = await deleteProject(projectId);
+        if (error) {
+          throw new Error(error);
+        }
         router.refresh();
+      } catch (error: unknown) {
+        console.error("Error deleting account", error);
       }
     });
   }
-  
 
   useEffect(() => {
     async function fetchProjects() {
+      if (!session?.user.id) return;
+      
       setLoading(true);
       setError(null);
 
       try {
-        const res = await fetch(`/api/user/projects/${session?.user.id}`);
-        if (!res.ok) throw new Error("Failed to fetch projects");
-        const data = await res.json();
+        const res = await fetch(`/api/user/projects/${session.user.id}`);
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        
+        const data: unknown = await res.json();
+        if (!Array.isArray(data)) {
+          throw new Error("Invalid response format");
+        }
 
-        const transformed = data.map((proj: any) => ({
+        const transformed: Project[] = data.map((proj) => ({
           id: proj.id,
           title: proj.title,
           status: proj.status,
@@ -92,16 +91,16 @@ export default function DashboardProfile({ session }: Props) {
         }));
 
         setProjects(transformed);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : "Failed to fetch projects";
+        setError(message);
+        console.error("Fetch projects error:", err);
       } finally {
         setLoading(false);
       }
     }
 
-    if (session?.user.id) {
-      fetchProjects();
-    }
+    fetchProjects();
   }, [session?.user.id]);
 
   return (

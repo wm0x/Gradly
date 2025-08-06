@@ -1,4 +1,3 @@
- 
 "use server";
 
 import { db } from "@/lib/db";
@@ -7,7 +6,7 @@ import bcrypt from "bcryptjs";
 import { auth } from "@/auth";
 import { UpdateUserInfo } from "../../../../../schema/user";
 
-export const UpdateUser = async (values: z.infer<typeof UpdateUserInfo>) => {
+export const UpdateUser = async (values: z.infer<typeof UpdateUserInfo>): Promise<{ success?: string; error?: string }> => {
   const session = await auth();
 
   if (!session?.user?.id) {
@@ -36,21 +35,27 @@ export const UpdateUser = async (values: z.infer<typeof UpdateUserInfo>) => {
       return { error: "اسم المستخدم أو البريد الإلكتروني مستخدم مسبقًا" };
     }
 
-    const updateData: any = {
+    const updateData: {
+      name?: string;
+      username?: string;
+      email?: string;
+      password_hash?: string;
+    } = {
       name: fullName,
       username,
       email,
     };
 
     if (password && password.length >= 8) {
-      //this for check the pass is not same crrently password
       const isSamePassword = await bcrypt.compare(
         password,
         currentUser.password_hash
       );
+
       if (isSamePassword) {
         return { error: "كلمة المرور الجديدة لا يمكن أن تكون نفس الحالية" };
       }
+
       updateData.password_hash = await bcrypt.hash(password, 10);
     }
 
@@ -60,8 +65,7 @@ export const UpdateUser = async (values: z.infer<typeof UpdateUserInfo>) => {
     });
 
     return { success: "تم تحديث البيانات بنجاح" };
-  } catch (err) {
-    console.error("[UPDATE_USER]", err);
+  } catch  {
     return { error: "حدث خطأ أثناء تحديث البيانات" };
   }
 };

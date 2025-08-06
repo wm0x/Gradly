@@ -204,7 +204,7 @@ const router = useRouter();
             </form>
           </Form>
           <div className="mt-4 mb-6 text-center text-sm text-white/70">
-            don't have account?{" "}
+            do not have account?{" "}
             <a
               href="/auth/register"
               className="font-semibold text-green-400 hover:underline transition-all duration-200"

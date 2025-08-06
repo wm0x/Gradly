@@ -6,7 +6,7 @@ export async function deleteProject(id: string) {
   try {
     await db.project.delete({ where: { id } });
     return { success: true };
-  } catch (_error) {
+  } catch  {
     return { error: "Failed to delete project" };
   }  
 }

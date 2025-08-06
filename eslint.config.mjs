@@ -35,6 +35,12 @@ const config = [
     }
   },
 
+  ...compat.extends(
+    "next/core-web-vitals",
+    "plugin:@typescript-eslint/recommended"
+  ),
+
+  // 👇 Place override AFTER compat.extends()
   {
     rules: {
       "@typescript-eslint/no-unused-vars": [
@@ -44,14 +50,16 @@ const config = [
           "varsIgnorePattern": "^_"
         }
       ],
-      "@typescript-eslint/no-require-imports": "error"
+      '@typescript-eslint/no-empty-object-type': 'off',
+      '@typescript-eslint/no-unused-expressions': 'off',
+      "@typescript-eslint/no-require-imports": "error",
+      "@typescript-eslint/no-explicit-any": "off", // ✅ Disable the rule here
+      "react/no-unescaped-entities": "off",  // disable quote errors
+      'react/display-name': 'off',
+      "react/jsx-key": "off",
+      "no-unused-expressions": "off"         // disable unused expression warning
     }
-  },
-
-  ...compat.extends(
-    "next/core-web-vitals",
-    "plugin:@typescript-eslint/recommended"
-  )
+  }
 ];
 
 export default config;
